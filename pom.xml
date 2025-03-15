@@ -264,19 +264,11 @@
                 </executions>
             </plugin>
             <!-- AWS Lambda artifact builder plugin -->
-
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-shade-plugin</artifactId>
-    <version>3.4.1</version>
+    <version>3.2.4</version>
     <configuration>
-        <annotationProcessorPaths>
-            <path>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.36</version>
-            </path>
-        </annotationProcessorPaths>
         <createDependencyReducedPom>false</createDependencyReducedPom>
         <shadedArtifactAttached>true</shadedArtifactAttached>
         <shadedClassifierName>shaded</shadedClassifierName>
@@ -325,6 +317,8 @@
         </execution>
     </executions>
 </plugin>
+
+
 
 
 
