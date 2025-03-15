@@ -179,7 +179,7 @@
         </pluginManagement>
 
         <plugins>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>1.18.20.0</version>
@@ -201,7 +201,7 @@
                             <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>test-delombok</id>
                         <phase>generate-test-sources</phase>
                         <goals>
@@ -212,9 +212,9 @@
                             <verbose>true</verbose>
                             <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
