@@ -197,7 +197,8 @@
                                 <javaLangAsFQN>skip</javaLangAsFQN>
                             </formatPreferences>
                             <verbose>true</verbose>
-                           <addOutputDirectory>false</addOutputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/delombok</outputDirectory>
+                            <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
                     </execution>
                     <execution>
