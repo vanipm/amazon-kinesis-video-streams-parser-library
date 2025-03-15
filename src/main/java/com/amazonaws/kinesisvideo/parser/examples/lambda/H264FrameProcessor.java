@@ -81,6 +81,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                     outputKvsStreamName, regionName);
             final KinesisVideoClient kinesisVideoClient = KinesisVideoJavaClientFactory
                     .createKinesisVideoClient(regionName, credentialsProvider);
+            log.info("CameraMediaSourceConfiguration");
             final CameraMediaSourceConfiguration configuration =
                     new CameraMediaSourceConfiguration.Builder()
                             .withFrameRate(30)
