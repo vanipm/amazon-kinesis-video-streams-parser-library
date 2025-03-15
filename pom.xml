@@ -170,7 +170,7 @@
                  <resource>
                      <directory>src/main/resources</directory>
                      <includes>
-                         <include>log4j2.properties</include>
+                         <include>**/*</include>
                      </includes>
                      <filtering>false</filtering>
                  </resource>
@@ -303,9 +303,10 @@
             </transformer>
 
             <!-- Include log4j2.properties -->
-            <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
-                <resource>src/main/resources/log4j2.properties</resource>
-            </transformer>
+         <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+             <resource>log4j2.properties</resource>
+         </transformer>
+
         </transformers>
     </configuration>
     <executions>
