@@ -220,7 +220,7 @@
                             </formatPreferences>
                             <verbose>true</verbose>
                             <outputDirectory>${project.build.directory}/generated-sources/lombok</outputDirectory>
-                            <!--<addOutputDirectory>false</addOutputDirectory>-->
+                            <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
                     </execution>-->
                     <!--<execution>
