@@ -277,6 +277,7 @@
                   <include>com.amazonaws:*:*</include>
                   <include>org.apache.logging.log4j:*:*</include>
                   <include>org.slf4j:*:*</include>
+                  <include>commons-logging:*:*</include>
             </includes>
         </artifactSet>
 
