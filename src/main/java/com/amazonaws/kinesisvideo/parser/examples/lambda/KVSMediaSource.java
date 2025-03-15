@@ -46,6 +46,7 @@ public class KVSMediaSource implements MediaSource {
 
     private void putFrame(final KinesisVideoFrame kinesisVideoFrame) {
         try {
+           log.debug("PutFrame Sink for frame no : {}", kinesisVideoFrame);
             mediaSourceSink.onFrame(kinesisVideoFrame);
         } catch (final KinesisVideoException ex) {
             throw new RuntimeException(ex);
@@ -89,7 +90,8 @@ public class KVSMediaSource implements MediaSource {
     }
 
     public void putFrameData(final EncodedFrame encodedFrame) {
-        final int flags = encodedFrame.isKeyFrame() ? FRAME_FLAG_KEY_FRAME : FRAME_FLAG_NONE;
+       log.debug("putFrameData : {}", encodedFrame);
+       final int flags = encodedFrame.isKeyFrame() ? FRAME_FLAG_KEY_FRAME : FRAME_FLAG_NONE;
         if (encodedFrame.getByteBuffer() != null) {
             final KinesisVideoFrame frame = new KinesisVideoFrame(
                     frameIndex++,
