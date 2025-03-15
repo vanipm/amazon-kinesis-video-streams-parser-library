@@ -204,7 +204,7 @@
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>1.18.20.0</version>
                 <executions>
-                    <execution>
+                    <!--<execution>
                         <id>delombok</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -220,7 +220,7 @@
                             <outputDirectory>${project.build.directory}/generated-sources/delombok</outputDirectory>
                             <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <!--<execution>
                         <id>test-delombok</id>
                         <phase>generate-test-sources</phase>
