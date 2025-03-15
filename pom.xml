@@ -161,6 +161,23 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
+
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-core</artifactId>
+             <version>2.15.0</version>
+         </dependency>
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-databind</artifactId>
+             <version>2.15.0</version>
+         </dependency>
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+             <artifactId>jackson-annotations</artifactId>
+             <version>2.15.0</version>
+         </dependency>
+
     </dependencies>
 
     <developers>
@@ -278,6 +295,7 @@
                   <include>org.apache.logging.log4j:*:*</include>
                   <include>org.slf4j:*:*</include>
                   <include>commons-logging:*:*</include>
+                  <include>com.fasterxml.jackson.core:*:*</include>
             </includes>
         </artifactSet>
 
