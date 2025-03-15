@@ -176,6 +176,7 @@
                                 <version>1.18.36</version>
                             </path>
                         </annotationProcessorPaths>
+                        <outputDirectory>${project.build.directory}/generated-sources/lombok</outputDirectory>
                     </configuration>
                 </plugin>
             </plugins>
@@ -283,6 +284,7 @@
              </executions>
          </plugin>
 
+         
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
