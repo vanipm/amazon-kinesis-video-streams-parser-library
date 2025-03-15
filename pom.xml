@@ -166,6 +166,13 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.20</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
             </plugins>
@@ -190,6 +197,7 @@
                                 <javaLangAsFQN>skip</javaLangAsFQN>
                             </formatPreferences>
                             <verbose>true</verbose>
+                           <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -201,6 +209,7 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <verbose>true</verbose>
+                            <addOutputDirectory>false</addOutputDirectory>
                         </configuration>
                     </execution>
                 </executions>
