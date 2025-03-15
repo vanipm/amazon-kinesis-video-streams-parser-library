@@ -168,9 +168,9 @@
     <build>
             <resources>
                  <resource>
-                     <directory>src/main/resources</directory>
+                     <directory>${project.build.directory}/classes</directory>
                      <includes>
-                         <include>**/*</include>
+                         <include>log4j2.properties</include>
                      </includes>
                      <filtering>false</filtering>
                  </resource>
