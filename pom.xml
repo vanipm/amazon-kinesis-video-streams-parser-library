@@ -223,15 +223,14 @@
                   </plugin>
 
 
-          <plugin>
+         <plugin>
              <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-jar-plugin</artifactId>
              <version>3.3.0</version>
              <configuration>
-                 <classesDirectory>${project.build.outputDirectory}</classesDirectory>
                  <includes>
                      <include>**/*.class</include>
-                     <include>${project.build.directory}/generated-sources/lombok/**/*.class</include>
+                     <include>log4j2.properties</include>
                  </includes>
                  <archive>
                      <manifest>
@@ -240,6 +239,7 @@
                  </archive>
              </configuration>
          </plugin>
+
                  
           <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
