@@ -264,31 +264,71 @@
                 </executions>
             </plugin>
             <!-- AWS Lambda artifact builder plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.36</version>
-                        </path>
-                    </annotationProcessorPaths>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>shaded</shadedClassifierName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.6.0</version>
+    <configuration>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.36</version>
+            </path>
+        </annotationProcessorPaths>
+        <createDependencyReducedPom>false</createDependencyReducedPom>
+        <shadedArtifactAttached>true</shadedArtifactAttached>
+        <shadedClassifierName>shaded</shadedClassifierName>
+
+        <artifactSet>
+            <includes>
+                <include>com.amazonaws:*:*</include>
+                <include>org.apache.logging.log4j:*:*</include>
+            </includes>
+        </artifactSet>
+
+        <filters>
+            <filter>
+                <artifact>*:*</artifact>
+                <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                </excludes>
+            </filter>
+        </filters>
+
+        <transformers>
+            <!-- Merge META-INF/services files -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+
+            <!-- Merge Spring metadata files -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                <resource>META-INF/spring.handlers</resource>
+                <resource>META-INF/spring.schemas</resource>
+                <resource>META-INF/spring.factories</resource>
+            </transformer>
+
+            <!-- Include log4j2.properties -->
+            <transformer implementation="org.apache.maven.plugins.shade.resource.PropertiesFileTransformer">
+                <resource>log4j2.properties</resource>
+            </transformer>
+        </transformers>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+
+
+
+                 
 
         </plugins>
 
