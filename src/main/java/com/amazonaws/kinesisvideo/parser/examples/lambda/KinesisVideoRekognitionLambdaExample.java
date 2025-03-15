@@ -74,10 +74,15 @@ public final class KinesisVideoRekognitionLambdaExample implements RequestHandle
      *
      */
     public static void main(final String[] args) throws Exception {
-        final KinesisVideoRekognitionLambdaExample KinesisVideoRekognitionLambdaExample =
+
+       log.info("Starting KinesisVideoRekognitionLambdaExample");
+       log.info("KVSStreamName: " + System.getProperty("KVSStreamName"));
+       log.info("KDSStreamName: " + System.getProperty("KDSStreamName"));
+       final KinesisVideoRekognitionLambdaExample KinesisVideoRekognitionLambdaExample =
                 new KinesisVideoRekognitionLambdaExample();
         KinesisVideoRekognitionLambdaExample.initialize(
                 System.getProperty("KVSStreamName"), Regions.fromName(System.getenv("AWS_REGION")));
+        log.debug("InvokingstartKDSWorker");
         KinesisVideoRekognitionLambdaExample.startKDSWorker(System.getProperty("KDSStreamName"));
         Thread.sleep(KCL_INIT_DELAY_MILLIS); // Initial delay to wait for KCL to initialize
         while (true) { // For local desktop testing.
@@ -92,6 +97,7 @@ public final class KinesisVideoRekognitionLambdaExample implements RequestHandle
         this.inputKvsStreamName = kvsStreamName;
         outputKvsStreamName = kvsStreamName + "-Rekognized";
         kvsClient = new StreamOps(regionName, kvsStreamName, credentialsProvider);
+       log.debug("H264FrameProcessor.create");
         h264FrameProcessor = H264FrameProcessor.create(credentialsProvider, outputKvsStreamName, regionName);
         fragmentCheckpointManager = new DDBBasedFragmentCheckpointManager(kvsClient.getRegion(), credentialsProvider);
         log.info("Initialized with input KVS stream: {}, output {}, region : {}",
@@ -199,6 +205,7 @@ public final class KinesisVideoRekognitionLambdaExample implements RequestHandle
         log.info("Loading JNI .so file..");
         final ClassLoader classLoader = getClass().getClassLoader();
         final File cityFile = new File(classLoader.getResource("libKinesisVideoProducerJNI.so").getFile());
+        log.info("Loading JNI from {}", cityFile.getAbsolutePath());
         System.load(cityFile.getAbsolutePath());
         log.info("Loaded JNI from {}", cityFile.getAbsolutePath());
     }
