@@ -261,7 +261,7 @@
              <configuration>
                  <includes>
                      <include>**/*.class</include>
-                     <include>log4j2.properties</include>
+                     <include>log4j2*.properties</include>
                  </includes>
                  <archive>
                      <manifest>
