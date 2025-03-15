@@ -289,7 +289,7 @@
         <shadedArtifactAttached>true</shadedArtifactAttached>
         <shadedClassifierName>shaded</shadedClassifierName>
 
-        <artifactSet>
+        <!--<artifactSet>
             <includes>
                   <include>com.amazonaws:*:*</include>
                   <include>org.apache.logging.log4j:*:*</include>
@@ -297,7 +297,7 @@
                   <include>commons-logging:*:*</include>
                   <include>com.fasterxml.jackson.core:*:*</include>
             </includes>
-        </artifactSet>
+        </artifactSet>-->
 
         <filters>
             <filter>
