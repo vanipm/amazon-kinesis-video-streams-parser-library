@@ -219,8 +219,8 @@
                                 <javaLangAsFQN>skip</javaLangAsFQN>
                             </formatPreferences>
                             <verbose>true</verbose>
-                            <outputDirectory>${project.build.directory}/generated-sources/delombok</outputDirectory>
-                            <addOutputDirectory>false</addOutputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/lombok</outputDirectory>
+                            <!--<addOutputDirectory>false</addOutputDirectory>-->
                         </configuration>
                     </execution>-->
                     <!--<execution>
@@ -253,18 +253,24 @@
                     </execution>
                 </executions>
             </plugin>-->
-         <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-jar-plugin</artifactId>
-                  <version>3.2.0</version>
-                  <configuration>
-                           <archive>
-                              <manifest>
-                                  <mainClass>com.amazonaws.kinesisvideo.parser.examples.lambda.KinesisVideoRekognitionLambdaExample</mainClass>
-                              </manifest>
-                           </archive>
-                  </configuration>
+          <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-jar-plugin</artifactId>
+             <version>3.3.0</version>
+             <configuration>
+                 <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                 <includes>
+                     <include>**/*.class</include>
+                     <include>${project.build.directory}/generated-sources/lombok/**/*.class</include>
+                 </includes>
+                 <archive>
+                     <manifest>
+                         <mainClass>com.amazonaws.kinesisvideo.parser.examples.lambda.KinesisVideoRekognitionLambdaExample</mainClass>
+                     </manifest>
+                 </archive>
+             </configuration>
          </plugin>
+                 
          <plugin>
              <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-assembly-plugin</artifactId>
