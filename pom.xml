@@ -177,17 +177,7 @@
              </resources>
 
         <plugins>
-                  <!-- Maven Resources Plugin -->
-                 <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-resources-plugin</artifactId>
-                     <version>3.2.0</version>
-                     <configuration>
-                         <encoding>UTF-8</encoding>
-                         <overwrite>true</overwrite>
-                         <includeEmptyDirs>true</includeEmptyDirs>
-                     </configuration>
-                 </plugin>
+
                   <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-compiler-plugin</artifactId>
@@ -209,7 +199,17 @@
                       </configuration>
                   </plugin>
                  
-
+                  <!-- Maven Resources Plugin -->
+                 <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-resources-plugin</artifactId>
+                     <version>3.2.0</version>
+                     <configuration>
+                         <encoding>UTF-8</encoding>
+                         <overwrite>true</overwrite>
+                         <includeEmptyDirs>true</includeEmptyDirs>
+                     </configuration>
+                 </plugin>
 
           <plugin>
              <groupId>org.apache.maven.plugins</groupId>
