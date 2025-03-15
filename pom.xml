@@ -155,10 +155,15 @@
         </developer>
     </developers>
     <build>
-        <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory>
-        <pluginManagement>
+        <sourceDirectory>${project.build.directory}/generated-sources/lombok</sourceDirectory>
+        <!--<pluginManagement>
             <plugins>
-                <plugin>
+                
+            </plugins>
+        </pluginManagement>-->
+
+        <plugins>
+              <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.14.0</version>
@@ -178,11 +183,7 @@
                         </annotationProcessorPaths>
                         <outputDirectory>${project.build.directory}/generated-sources/lombok</outputDirectory>
                     </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
+             </plugin>                 
              <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-surefire-plugin</artifactId>
