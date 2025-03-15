@@ -155,7 +155,7 @@
         </developer>
     </developers>
     <build>
-        <sourceDirectory>${project.build.directory}/generated-sources/lombok</sourceDirectory>
+        <!--<sourceDirectory>${project.build.directory}/generated-sources/lombok</sourceDirectory>-->
         <!--<pluginManagement>
             <plugins>
                 
