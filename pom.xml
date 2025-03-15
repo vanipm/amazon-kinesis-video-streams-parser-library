@@ -332,6 +332,11 @@
              <resource>log4j2.properties</resource>
          </transformer>
 
+             <!-- Include log4j2.component.properties -->
+             <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                 <resource>log4j2.component.properties</resource>
+             </transformer>
+                 
         </transformers>
     </configuration>
     <executions>
