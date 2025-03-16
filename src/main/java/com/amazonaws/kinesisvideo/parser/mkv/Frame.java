@@ -11,29 +11,17 @@ or in the "license" file accompanying this file.
 This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package com.amazonaws.kinesisvideo.parser.mkv;
 
 import com.amazonaws.kinesisvideo.parser.ebml.EBMLUtils;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import java.nio.ByteBuffer;
 import org.apache.commons.lang3.Validate;
 
-import java.nio.ByteBuffer;
-
-// builderClassName = "GeneratedFrameBuilder",
-
-/**
- * Class that captures the meta-data and data for a frame in a Kinesis Video Stream.
- * This is based on the content of a SimpleBlock in Mkv.
- */
-@Getter
-@AllArgsConstructor(access=AccessLevel.PRIVATE)
-@Builder( toBuilder = true)
-@ToString(exclude = {"frameData"})
 public class Frame {
     private final long trackNumber;
     private final int timeCode;
@@ -43,27 +31,12 @@ public class Frame {
     private final Lacing lacing;
     private final ByteBuffer frameData;
 
-    public enum Lacing { NO, XIPH, EBML, FIXED_SIZE}
-
-    /**
-     * Create a frame object for the provided data buffer.
-     * Do not create a copy of the data buffer while creating the frame object.
-     * @param simpleBlockDataBuffer The data buffer.
-     * @return A frame containing the data buffer.
-     */
     public static Frame withoutCopy(ByteBuffer simpleBlockDataBuffer) {
         FrameBuilder builder = getBuilderWithCommonParams(simpleBlockDataBuffer);
-
         ByteBuffer frameData = simpleBlockDataBuffer.slice();
         return builder.frameData(frameData).build();
     }
 
-    /**
-     * Create a frame object for the provided data buffer.
-     * Create a copy of the data buffer while creating the frame object.
-     * @param simpleBlockDataBuffer The data buffer.
-     * @return A frame containing a copy of the data buffer.
-     */
     public static Frame withCopy(ByteBuffer simpleBlockDataBuffer) {
         FrameBuilder builder = getBuilderWithCommonParams(simpleBlockDataBuffer);
         ByteBuffer frameData = ByteBuffer.allocate(simpleBlockDataBuffer.remaining());
@@ -72,44 +45,83 @@ public class Frame {
         return builder.frameData(frameData).build();
     }
 
-    /**
-     * Create a FrameBuilder
-     * @param simpleBlockDataBuffer
-     * @return
-     */
     private static FrameBuilder getBuilderWithCommonParams(ByteBuffer simpleBlockDataBuffer) {
-        FrameBuilder builder = Frame.builder()
-                .trackNumber(EBMLUtils.readEbmlInt(simpleBlockDataBuffer))
-                .timeCode((int) EBMLUtils.readDataSignedInteger(simpleBlockDataBuffer, 2));
-
-        final long flag = EBMLUtils.readUnsignedIntegerSevenBytesOrLess(simpleBlockDataBuffer, 1);
-        builder.keyFrame((flag & (0x1 << 7)) > 0)
-                .invisible((flag & (0x1 << 3)) > 0)
-                .discardable((flag & 0x1) > 0);
-
-        final int laceValue = (int) (flag & 0x3 << 1) >> 1;
-        final Lacing lacing = getLacing(laceValue);
+        FrameBuilder builder = builder().trackNumber(EBMLUtils.readEbmlInt(simpleBlockDataBuffer)).timeCode((int)EBMLUtils.readDataSignedInteger(simpleBlockDataBuffer, 2L));
+        long flag = EBMLUtils.readUnsignedIntegerSevenBytesOrLess(simpleBlockDataBuffer, 1L);
+        builder.keyFrame((flag & 128L) > 0L).invisible((flag & 8L) > 0L).discardable((flag & 1L) > 0L);
+        int laceValue = (int)(flag & 6L) >> 1;
+        Lacing lacing = getLacing(laceValue);
         builder.lacing(lacing);
         return builder;
     }
 
     private static Lacing getLacing(int laceValue) {
-        switch(laceValue) {
+        switch (laceValue) {
             case 0:
-                return Lacing.NO;
+                return Frame.Lacing.NO;
             case 1:
-                return Lacing.XIPH;
+                return Frame.Lacing.XIPH;
             case 2:
-                return Lacing.EBML;
+                return Frame.Lacing.EBML;
             case 3:
-                return Lacing.FIXED_SIZE;
+                return Frame.Lacing.FIXED_SIZE;
             default:
-                Validate.isTrue(false, "Invalid value of lacing "+laceValue);
+                Validate.isTrue(false, "Invalid value of lacing " + laceValue, new Object[0]);
+                throw new IllegalArgumentException("Invalid value of lacing " + laceValue);
         }
-        throw new IllegalArgumentException("Invalid value of lacing "+laceValue);
     }
 
-     public static class FrameBuilder {
+    public static FrameBuilder builder() {
+        return new FrameBuilder();
+    }
+
+    public FrameBuilder toBuilder() {
+        return (new FrameBuilder()).trackNumber(this.trackNumber).timeCode(this.timeCode).keyFrame(this.keyFrame).invisible(this.invisible).discardable(this.discardable).lacing(this.lacing).frameData(this.frameData);
+    }
+
+    public long getTrackNumber() {
+        return this.trackNumber;
+    }
+
+    public int getTimeCode() {
+        return this.timeCode;
+    }
+
+    public boolean isKeyFrame() {
+        return this.keyFrame;
+    }
+
+    public boolean isInvisible() {
+        return this.invisible;
+    }
+
+    public boolean isDiscardable() {
+        return this.discardable;
+    }
+
+    public Lacing getLacing() {
+        return this.lacing;
+    }
+
+    public ByteBuffer getFrameData() {
+        return this.frameData;
+    }
+
+    private Frame(long trackNumber, int timeCode, boolean keyFrame, boolean invisible, boolean discardable, Lacing lacing, ByteBuffer frameData) {
+        this.trackNumber = trackNumber;
+        this.timeCode = timeCode;
+        this.keyFrame = keyFrame;
+        this.invisible = invisible;
+        this.discardable = discardable;
+        this.lacing = lacing;
+        this.frameData = frameData;
+    }
+
+    public String toString() {
+        return "Frame(trackNumber=" + this.getTrackNumber() + ", timeCode=" + this.getTimeCode() + ", keyFrame=" + this.isKeyFrame() + ", invisible=" + this.isInvisible() + ", discardable=" + this.isDiscardable() + ", lacing=" + this.getLacing() + ")";
+    }
+
+    public static class FrameBuilder {
         private long trackNumber;
         private int timeCode;
         private boolean keyFrame;
@@ -164,4 +176,15 @@ public class Frame {
             return "Frame.FrameBuilder(trackNumber=" + this.trackNumber + ", timeCode=" + this.timeCode + ", keyFrame=" + this.keyFrame + ", invisible=" + this.invisible + ", discardable=" + this.discardable + ", lacing=" + this.lacing + ", frameData=" + this.frameData + ")";
         }
     }
+
+    public static enum Lacing {
+        NO,
+        XIPH,
+        EBML,
+        FIXED_SIZE;
+
+        private Lacing() {
+        }
+    }
 }
+
