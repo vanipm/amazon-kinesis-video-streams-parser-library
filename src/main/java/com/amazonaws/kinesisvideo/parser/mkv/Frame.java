@@ -32,7 +32,7 @@ import java.nio.ByteBuffer;
  */
 @Getter
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
-@Builder(toBuilder = true)
+@Builder(builderClassName = "GeneratedFrameBuilder", toBuilder = true)
 @ToString(exclude = {"frameData"})
 public class Frame {
     private final long trackNumber;
