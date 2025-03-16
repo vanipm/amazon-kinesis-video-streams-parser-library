@@ -255,9 +255,9 @@
                           <!-- Exclude original source files to avoid duplication -->
                           <excludes>
                               <!-- Option 1: Exclude all Java files from source folder -->
-                              <exclude>**/*.java</exclude>
+                              <!--<exclude>**/*.java</exclude>-->
                               <!-- Option 2: If you want to exclude only Lombok-annotated files -->
-                              <!-- <exclude>**/*LombokAnnotatedFile.java</exclude> -->
+                              <exclude>**/*LombokAnnotatedFile.java</exclude> 
                           </excludes>                               
                       </configuration>
                   </plugin>
