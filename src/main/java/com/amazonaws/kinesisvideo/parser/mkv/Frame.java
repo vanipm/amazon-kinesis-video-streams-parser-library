@@ -17,14 +17,14 @@ import com.amazonaws.kinesisvideo.parser.ebml.EBMLUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+// import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.Validate;
 
 import java.nio.ByteBuffer;
 
-
+// @Builder(builderClassName = "GeneratedFrameBuilder", toBuilder = true)
 
 /**
  * Class that captures the meta-data and data for a frame in a Kinesis Video Stream.
@@ -32,7 +32,6 @@ import java.nio.ByteBuffer;
  */
 @Getter
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
-// @Builder(builderClassName = "GeneratedFrameBuilder", toBuilder = true)
 @ToString(exclude = {"frameData"})
 public class Frame {
     private final long trackNumber;
