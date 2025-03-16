@@ -209,6 +209,48 @@
         <plugins>
 
                   <plugin>
+                      <groupId>org.projectlombok</groupId>
+                      <artifactId>lombok-maven-plugin</artifactId>
+                      <version>1.18.20.0</version>
+                      <executions>
+                          <execution>
+                              <id>delombok</id>
+                              <phase>generate-sources</phase>
+                              <goals>
+                                  <goal>delombok</goal>
+                              </goals>
+                              <configuration>
+                                  <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                                  <encoding>UTF-8</encoding>
+                                  <outputDirectory>${project.build.directory}/generated-sources/lombok</outputDirectory>
+                                  <addOutputDirectory>false</addOutputDirectory>
+                              </configuration>
+                          </execution>
+                      </executions>
+                  </plugin>
+                  
+                  <plugin>
+                      <groupId>org.codehaus.mojo</groupId>
+                      <artifactId>build-helper-maven-plugin</artifactId>
+                      <version>3.2.0</version>
+                      <executions>
+                          <execution>
+                              <id>add-source</id>
+                              <phase>generate-sources</phase>
+                              <goals>
+                                  <goal>add-source</goal>
+                              </goals>
+                              <configuration>
+                                  <sources>
+                                      <source>${project.build.directory}/generated-sources/lombok</source>
+                                  </sources>
+                              </configuration>
+                          </execution>
+                      </executions>
+                  </plugin>
+
+                 
+                  <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-compiler-plugin</artifactId>
                       <version>3.14.0</version>
@@ -227,6 +269,13 @@
                                   <version>1.18.36</version>
                               </path>
                           </annotationProcessorPaths>
+                          <!-- Exclude original source files to avoid duplication -->
+                          <excludes>
+                              <!-- Option 1: Exclude all Java files from source folder -->
+                              <exclude>**/*.java</exclude>
+                              <!-- Option 2: If you want to exclude only Lombok-annotated files -->
+                              <!-- <exclude>**/*LombokAnnotatedFile.java</exclude> -->
+                          </excludes>                               
                       </configuration>
                   </plugin>
 
@@ -254,100 +303,100 @@
                   </plugin>
 
 
-         <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-jar-plugin</artifactId>
-             <version>3.3.0</version>
-             <configuration>
-                 <includes>
-                     <include>**/*.class</include>
-                     <include>log4j2*.properties</include>
-                 </includes>
-                 <archive>
-                     <manifest>
-                         <mainClass>com.amazonaws.kinesisvideo.parser.examples.lambda.KinesisVideoRekognitionLambdaExample</mainClass>
-                     </manifest>
-                 </archive>
-             </configuration>
-         </plugin>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-jar-plugin</artifactId>
+                      <version>3.3.0</version>
+                      <configuration>
+                          <includes>
+                              <include>**/*.class</include>
+                              <include>log4j2*.properties</include>
+                          </includes>
+                          <archive>
+                              <manifest>
+                                  <mainClass>com.amazonaws.kinesisvideo.parser.examples.lambda.KinesisVideoRekognitionLambdaExample</mainClass>
+                              </manifest>
+                          </archive>
+                      </configuration>
+                  </plugin>
 
                  
-          <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- AWS Lambda artifact builder plugin -->
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-shade-plugin</artifactId>
-    <version>3.6.0</version>
-    <configuration>
-        <createDependencyReducedPom>false</createDependencyReducedPom>
-        <shadedArtifactAttached>true</shadedArtifactAttached>
-        <shadedClassifierName>shaded</shadedClassifierName>
-
-        <!--<artifactSet>
-            <includes>
-                  <include>com.amazonaws:*:*</include>
-                  <include>org.apache.logging.log4j:*:*</include>
-                  <include>org.slf4j:*:*</include>
-                  <include>commons-logging:*:*</include>
-                  <include>com.fasterxml.jackson.core:*:*</include>
-            </includes>
-        </artifactSet>-->
-
-        <filters>
-            <filter>
-                <artifact>*:*</artifact>
-                <excludes>
-                    <exclude>META-INF/*.SF</exclude>
-                    <exclude>META-INF/*.DSA</exclude>
-                    <exclude>META-INF/*.RSA</exclude>
-                </excludes>
-            </filter>
-        </filters>
-
-        <transformers>
-            <!-- Merge META-INF/services files -->
-            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-
-            <!-- Merge Spring metadata files -->
-            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                <resource>META-INF/spring.handlers</resource>
-                <resource>META-INF/spring.schemas</resource>
-                <resource>META-INF/spring.factories</resource>
-            </transformer>
-
-            <!-- Include log4j2.properties -->
-         <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
-             <resource>log4j2.properties</resource>
-         </transformer>
-
-             <!-- Include log4j2.component.properties -->
-             <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
-                 <resource>log4j2.component.properties</resource>
-             </transformer>
-                 
-        </transformers>
-    </configuration>
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>shade</goal>
-            </goals>
-        </execution>
-    </executions>
-</plugin>
+                   <plugin>
+                         <groupId>org.apache.maven.plugins</groupId>
+                         <artifactId>maven-source-plugin</artifactId>
+                         <version>3.2.1</version>
+                         <executions>
+                             <execution>
+                                 <id>attach-sources</id>
+                                 <goals>
+                                     <goal>jar</goal>
+                                 </goals>
+                             </execution>
+                         </executions>
+                     </plugin>
+                     <!-- AWS Lambda artifact builder plugin -->
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-shade-plugin</artifactId>
+                      <version>3.6.0</version>
+                      <configuration>
+                          <createDependencyReducedPom>false</createDependencyReducedPom>
+                          <shadedArtifactAttached>true</shadedArtifactAttached>
+                          <shadedClassifierName>shaded</shadedClassifierName>
+                  
+                          <!--<artifactSet>
+                              <includes>
+                                    <include>com.amazonaws:*:*</include>
+                                    <include>org.apache.logging.log4j:*:*</include>
+                                    <include>org.slf4j:*:*</include>
+                                    <include>commons-logging:*:*</include>
+                                    <include>com.fasterxml.jackson.core:*:*</include>
+                              </includes>
+                          </artifactSet>-->
+                  
+                          <filters>
+                              <filter>
+                                  <artifact>*:*</artifact>
+                                  <excludes>
+                                      <exclude>META-INF/*.SF</exclude>
+                                      <exclude>META-INF/*.DSA</exclude>
+                                      <exclude>META-INF/*.RSA</exclude>
+                                  </excludes>
+                              </filter>
+                          </filters>
+                  
+                          <transformers>
+                              <!-- Merge META-INF/services files -->
+                              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                  
+                              <!-- Merge Spring metadata files -->
+                              <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                  <resource>META-INF/spring.handlers</resource>
+                                  <resource>META-INF/spring.schemas</resource>
+                                  <resource>META-INF/spring.factories</resource>
+                              </transformer>
+                  
+                              <!-- Include log4j2.properties -->
+                           <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                               <resource>log4j2.properties</resource>
+                           </transformer>
+                  
+                               <!-- Include log4j2.component.properties -->
+                               <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                   <resource>log4j2.component.properties</resource>
+                               </transformer>
+                                   
+                          </transformers>
+                      </configuration>
+                      <executions>
+                          <execution>
+                              <phase>package</phase>
+                              <goals>
+                                  <goal>shade</goal>
+                              </goals>
+                          </execution>
+                      </executions>
+                  </plugin>
 
 
 
