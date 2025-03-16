@@ -260,7 +260,7 @@
                           <encoding>UTF-8</encoding>
                           <compilerArgs>
                               <arg>--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
-
+                              <arg>-Xlint:processing</arg>
                           </compilerArgs>
                           <annotationProcessorPaths>
                               <path>
