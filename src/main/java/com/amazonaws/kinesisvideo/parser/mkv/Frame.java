@@ -17,14 +17,14 @@ import com.amazonaws.kinesisvideo.parser.ebml.EBMLUtils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-// import lombok.Builder;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.Validate;
 
 import java.nio.ByteBuffer;
 
-// @Builder(builderClassName = "GeneratedFrameBuilder", toBuilder = true)
+// builderClassName = "GeneratedFrameBuilder",
 
 /**
  * Class that captures the meta-data and data for a frame in a Kinesis Video Stream.
@@ -32,6 +32,7 @@ import java.nio.ByteBuffer;
  */
 @Getter
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
+@Builder( toBuilder = true)
 @ToString(exclude = {"frameData"})
 public class Frame {
     private final long trackNumber;
@@ -106,5 +107,61 @@ public class Frame {
                 Validate.isTrue(false, "Invalid value of lacing "+laceValue);
         }
         throw new IllegalArgumentException("Invalid value of lacing "+laceValue);
+    }
+
+     public static class FrameBuilder {
+        private long trackNumber;
+        private int timeCode;
+        private boolean keyFrame;
+        private boolean invisible;
+        private boolean discardable;
+        private Lacing lacing;
+        private ByteBuffer frameData;
+
+        FrameBuilder() {
+        }
+
+        public FrameBuilder trackNumber(long trackNumber) {
+            this.trackNumber = trackNumber;
+            return this;
+        }
+
+        public FrameBuilder timeCode(int timeCode) {
+            this.timeCode = timeCode;
+            return this;
+        }
+
+        public FrameBuilder keyFrame(boolean keyFrame) {
+            this.keyFrame = keyFrame;
+            return this;
+        }
+
+        public FrameBuilder invisible(boolean invisible) {
+            this.invisible = invisible;
+            return this;
+        }
+
+        public FrameBuilder discardable(boolean discardable) {
+            this.discardable = discardable;
+            return this;
+        }
+
+        public FrameBuilder lacing(Lacing lacing) {
+            this.lacing = lacing;
+            return this;
+        }
+
+        public FrameBuilder frameData(ByteBuffer frameData) {
+            this.frameData = frameData;
+            return this;
+        }
+
+        public Frame build() {
+            return new Frame(this.trackNumber, this.timeCode, this.keyFrame, this.invisible, this.discardable, this.lacing, this.frameData);
+        }
+
+        public String toString() {
+            return "Frame.FrameBuilder(trackNumber=" + this.trackNumber + ", timeCode=" + this.timeCode + ", keyFrame=" + this.keyFrame + ", invisible=" + this.invisible + ", discardable=" + this.discardable + ", lacing=" + this.lacing + ", frameData=" + this.frameData + ")";
+        }
     }
 }
