@@ -91,6 +91,7 @@ public class BoundingBoxImagePanel extends ImagePanel {
         g2.setColor(color);
         this.drawBoundingBox(g2, width, height, boundingBox);
         this.drawFaceTitle(g2, width, height, boundingBox, personName);
+        
         g2.setColor(c);
     }
 
@@ -107,6 +108,7 @@ public class BoundingBoxImagePanel extends ImagePanel {
         int top = (int)(boundingBox.getTop() * (double)height);
         int bbWidth = (int)(boundingBox.getWidth() * (double)width);
         int bbHeight = (int)(boundingBox.getHeight() * (double)height);
+        log.debug(" drawBoundingBox left {} top {} bbWidth {} bbHeight", width, bbWidth, bbHeight);
         g2.drawRect(left, top, bbWidth, bbHeight);
     }
 
