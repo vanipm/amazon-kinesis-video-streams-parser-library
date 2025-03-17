@@ -11,22 +11,8 @@ or in the "license" file accompanying this file.
 This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-package com.amazonaws.kinesisvideo.parser.kinesis;
 
-/*
- * Copyright 2012-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
+package com.amazonaws.kinesisvideo.parser.kinesis;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.kinesisvideo.parser.rekognition.pojo.DetectedFace;
@@ -79,9 +65,20 @@ public class KinesisRecordProcessor implements IRecordProcessor {
         this.kinesisShardId = shardId;
     }
 
+    public void printCallStack() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        log.debug("Call stack:");
+
+        for(StackTraceElement element : stackTrace) {
+            log.debug("\tat {}", element);
+        }
+
+    }
+
     public void processRecords(List<Record> records, IRecordProcessorCheckpointer checkpointer) {
         log.info("Processing " + records.size() + " records from " + this.kinesisShardId);
         LOG.info("Processing " + records.size() + " records from " + this.kinesisShardId);
+        this.printCallStack();
         this.processRecordsWithRetries(records);
         if (System.currentTimeMillis() > this.nextCheckpointTimeInMillis) {
             this.checkpoint(checkpointer);
@@ -187,8 +184,8 @@ public class KinesisRecordProcessor implements IRecordProcessor {
 
                 try {
                     Thread.sleep(3000L);
-                } catch (InterruptedException ex) {
-                    LOG.debug("Interrupted sleep", ex);
+                } catch (InterruptedException e) {
+                    LOG.debug("Interrupted sleep", e);
                 }
 
                 ++i;
