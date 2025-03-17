@@ -86,29 +86,28 @@ public class BoundingBoxImagePanel extends ImagePanel {
     }
 
     private void drawFaces(Graphics2D g2, int width, int height, BoundingBox boundingBox, String personName, Color color) {
-        log.debug(" drawFaceTitle width {} height {} boudingBox {} personName {} color {}", width, height, boundingBox, personName, color);
+        log.debug(" drawFaces width {} height {} boudingBox {} personName {} color {}", new Object[]{width, height, boundingBox, personName, color});
         Color c = g2.getColor();
         g2.setColor(color);
         this.drawBoundingBox(g2, width, height, boundingBox);
         this.drawFaceTitle(g2, width, height, boundingBox, personName);
-        
         g2.setColor(c);
     }
 
     private void drawFaceTitle(Graphics2D g2, int width, int height, BoundingBox boundingBox, String personName) {
-        log.debug(" drawFaceTitle width {} height {} boudingBox {} personName {}", width, height, boundingBox, personName);
+        log.debug(" drawFaceTitle width {} height {} boudingBox {} personName {}", new Object[]{width, height, boundingBox, personName});
         int left = (int)(boundingBox.getLeft() * (double)width);
         int top = (int)(boundingBox.getTop() * (double)height);
         g2.drawString(personName, left, top);
     }
 
     private void drawBoundingBox(Graphics2D g2, int width, int height, BoundingBox boundingBox) {
-        log.debug(" drawBoundingBox width {} height {} boudingBox {}", width, height, boundingBox);
+        log.debug(" drawBoundingBox width {} height {} boudingBox {}", new Object[]{width, height, boundingBox});
         int left = (int)(boundingBox.getLeft() * (double)width);
         int top = (int)(boundingBox.getTop() * (double)height);
         int bbWidth = (int)(boundingBox.getWidth() * (double)width);
         int bbHeight = (int)(boundingBox.getHeight() * (double)height);
-        log.debug(" drawBoundingBox left {} top {} bbWidth {} bbHeight", width, bbWidth, bbHeight);
+        log.debug(" drawBoundingBox left {} top {} bbWidth {} bbHeight", new Object[]{width, bbWidth, bbHeight});
         g2.drawRect(left, top, bbWidth, bbHeight);
     }
 
@@ -120,3 +119,4 @@ public class BoundingBoxImagePanel extends ImagePanel {
         this.repaint();
     }
 }
+
