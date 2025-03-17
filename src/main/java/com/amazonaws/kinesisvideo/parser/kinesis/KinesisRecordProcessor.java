@@ -184,8 +184,8 @@ public class KinesisRecordProcessor implements IRecordProcessor {
 
                 try {
                     Thread.sleep(3000L);
-                } catch (InterruptedException e) {
-                    LOG.debug("Interrupted sleep", e);
+                } catch (InterruptedException ex) {
+                    LOG.debug("Interrupted sleep", ex);
                 }
 
                 ++i;
