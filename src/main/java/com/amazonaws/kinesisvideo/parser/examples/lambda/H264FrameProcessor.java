@@ -11,6 +11,7 @@ or in the "license" file accompanying this file.
 This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
+
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -95,8 +96,19 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
         return new H264FrameProcessor(credentialsProvider, rekognizedStreamName, regionName);
     }
 
+    public void printCallStack() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        log.debug("Call stack:");
+
+        for(StackTraceElement element : stackTrace) {
+            log.debug("\tat {}", element);
+        }
+
+    }
+
     public void process(Frame frame, MkvTrackMetadata trackMetadata, Optional<FragmentMetadata> fragmentMetadata) throws FrameProcessException {
         log.debug("H264FrameProcessor-Processing frame: {}", frame);
+        this.printCallStack();
         if (this.rekognizedOutputs != null) {
             if (frame.getTrackNumber() == 1L) {
                 Preconditions.checkState(trackMetadata.getPixelWidth().isPresent() && trackMetadata.getPixelHeight().isPresent(), "Missing video resolution in track metadata !");
@@ -106,9 +118,11 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 Optional<RekognizedOutput> rekognizedOutput = this.findRekognizedOutputForFrame(frame, fragmentMetadata);
                 BufferedImage compositeFrame = this.renderFrame(decodedFrame, rekognizedOutput);
                 EncodedFrame encodedH264Frame = this.encodeH264Frame(compositeFrame);
-                // encodedH264Frame.setTimeCode(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis() + (long)frame.getTimeCode());
-                encodedH264Frame.setTimeCode( (long)frame.getTimeCode());
-                log.debug("Encoded frame : {} with timecode : {} ", this.frameNo, encodedH264Frame.getTimeCode());
+                encodedH264Frame.setTimeCode((long)frame.getTimeCode());
+                encodedH264Frame.setProducerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis());
+                encodedH264Frame.setServerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getServerSideTimestampMillis());
+                log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
+                log.debug("EncodedFrame: encodedH264Frame: {}", encodedH264Frame);
                 this.putFrame(encodedH264Frame, ((BigInteger)trackMetadata.getPixelWidth().get()).intValue(), ((BigInteger)trackMetadata.getPixelHeight().get()).intValue());
                 ++this.frameNo;
             } else {
@@ -127,6 +141,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
             this.isKVSProducerInitialized = true;
         }
 
+        log.debug("Putting frame {} with getTimeCode {} producerSideTimeStampMillis {} serverSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
         this.KVSMediaSource.putFrameData(encodedH264Frame);
         log.debug("PutFrame successful for frame no : {}", this.frameNo);
     }
@@ -204,3 +219,4 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
         this.frameBitRate = frameBitRate;
     }
 }
+
