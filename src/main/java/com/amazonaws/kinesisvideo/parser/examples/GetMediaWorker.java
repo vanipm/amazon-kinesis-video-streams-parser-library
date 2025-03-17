@@ -11,6 +11,7 @@ or in the "license" file accompanying this file.
 This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
+
 package com.amazonaws.kinesisvideo.parser.examples;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -28,69 +29,47 @@ import com.amazonaws.services.kinesisvideo.model.GetDataEndpointRequest;
 import com.amazonaws.services.kinesisvideo.model.GetMediaRequest;
 import com.amazonaws.services.kinesisvideo.model.GetMediaResult;
 import com.amazonaws.services.kinesisvideo.model.StartSelector;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Worker used to make a GetMedia call to Kinesis Video and stream in data and parse it and apply a visitor.
- */
-@Slf4j
 public class GetMediaWorker extends KinesisVideoCommon implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(GetMediaWorker.class);
     private final AmazonKinesisVideoMedia videoMedia;
     private final MkvElementVisitor elementVisitor;
     private final StartSelector startSelector;
 
-    private GetMediaWorker(Regions region,
-            AWSCredentialsProvider credentialsProvider,
-            String streamName,
-            StartSelector startSelector,
-            String endPoint,
-            MkvElementVisitor elementVisitor) {
+    private GetMediaWorker(Regions region, AWSCredentialsProvider credentialsProvider, String streamName, StartSelector startSelector, String endPoint, MkvElementVisitor elementVisitor) {
         super(region, credentialsProvider, streamName);
-
-        AmazonKinesisVideoMediaClientBuilder builder = AmazonKinesisVideoMediaClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region.getName()))
-                .withCredentials(getCredentialsProvider());
-
-        this.videoMedia = builder.build();
+        AmazonKinesisVideoMediaClientBuilder builder = (AmazonKinesisVideoMediaClientBuilder)((AmazonKinesisVideoMediaClientBuilder)AmazonKinesisVideoMediaClientBuilder.standard().withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region.getName()))).withCredentials(this.getCredentialsProvider());
+        this.videoMedia = (AmazonKinesisVideoMedia)builder.build();
         this.elementVisitor = elementVisitor;
         this.startSelector = startSelector;
     }
 
-    public static GetMediaWorker create(Regions region,
-            AWSCredentialsProvider credentialsProvider,
-            String streamName,
-            StartSelector startSelector,
-            AmazonKinesisVideo amazonKinesisVideo,
-            MkvElementVisitor visitor) {
-        String endPoint = amazonKinesisVideo.getDataEndpoint(new GetDataEndpointRequest().withAPIName(APIName.GET_MEDIA)
-                .withStreamName(streamName)).getDataEndpoint();
-
+    public static GetMediaWorker create(Regions region, AWSCredentialsProvider credentialsProvider, String streamName, StartSelector startSelector, AmazonKinesisVideo amazonKinesisVideo, MkvElementVisitor visitor) {
+        String endPoint = amazonKinesisVideo.getDataEndpoint((new GetDataEndpointRequest()).withAPIName(APIName.GET_MEDIA).withStreamName(streamName)).getDataEndpoint();
         return new GetMediaWorker(region, credentialsProvider, streamName, startSelector, endPoint, visitor);
     }
 
-    @Override
     public void run() {
         try {
-            log.info("Start GetMedia worker on stream {}", streamName);
-
-                GetMediaResult result = videoMedia.getMedia(new GetMediaRequest().withStreamName(streamName).withStartSelector(startSelector));
-            log.info("GetMedia called on stream {} response {} requestId {}",
-                    streamName,
-                    result.getSdkHttpMetadata().getHttpStatusCode(),
-                    result.getSdkResponseMetadata().getRequestId());
-
+            log.info("Start GetMedia worker on stream {}", this.streamName);
+            GetMediaResult result = this.videoMedia.getMedia((new GetMediaRequest()).withStreamName(this.streamName).withStartSelector(this.startSelector));
+            log.info("GetMedia called on stream {} response {} requestId {} MediaResult {}", new Object[]{this.streamName, result.getSdkHttpMetadata().getHttpStatusCode(), result.getSdkResponseMetadata().getRequestId(), result});
             StreamingMkvReader mkvStreamReader = StreamingMkvReader.createDefault(new InputStreamParserByteSource(result.getPayload()));
-            log.info("StreamingMkvReader created for stream {} ", streamName);
+            log.info("StreamingMkvReader created for stream {} ", this.streamName);
+
             try {
                 mkvStreamReader.apply(this.elementVisitor);
             } catch (MkvElementVisitException e) {
                 log.error("Exception while accepting visitor {}", e);
             }
         } catch (Throwable t) {
-            log.error("Failure in GetMediaWorker for streamName {} {}", streamName, t.toString());
+            log.error("Failure in GetMediaWorker for streamName {} {}", this.streamName, t.toString());
             throw t;
         } finally {
-            log.info("Exiting GetMediaWorker for stream {}", streamName);
+            log.info("Exiting GetMediaWorker for stream {}", this.streamName);
         }
+
     }
 }
