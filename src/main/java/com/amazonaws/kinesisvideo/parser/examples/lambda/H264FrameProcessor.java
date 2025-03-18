@@ -11,7 +11,6 @@ or in the "license" file accompanying this file.
 This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 */
-
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -118,10 +117,10 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 Optional<RekognizedOutput> rekognizedOutput = this.findRekognizedOutputForFrame(frame, fragmentMetadata);
                 BufferedImage compositeFrame = this.renderFrame(decodedFrame, rekognizedOutput);
                 EncodedFrame encodedH264Frame = this.encodeH264Frame(compositeFrame);
-                encodedH264Frame.setTimeCode((long)frame.getTimeCode());
+                encodedH264Frame.setTimeCode(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis() + (long)frame.getTimeCode());
                 encodedH264Frame.setProducerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis());
                 encodedH264Frame.setServerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getServerSideTimestampMillis());
-                log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
+                log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
                 log.debug("EncodedFrame: encodedH264Frame: {}", encodedH264Frame);
                 this.putFrame(encodedH264Frame, ((BigInteger)trackMetadata.getPixelWidth().get()).intValue(), ((BigInteger)trackMetadata.getPixelHeight().get()).intValue());
                 ++this.frameNo;
@@ -219,4 +218,3 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
         this.frameBitRate = frameBitRate;
     }
 }
-
