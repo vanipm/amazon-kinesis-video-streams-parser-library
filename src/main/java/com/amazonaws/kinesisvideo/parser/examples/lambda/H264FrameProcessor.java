@@ -120,7 +120,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 Optional<RekognizedOutput> rekognizedOutput = this.findRekognizedOutputForFrame(frame, fragmentMetadata);
                 BufferedImage compositeFrame = this.renderFrame(decodedFrame, rekognizedOutput);
                 EncodedFrame encodedH264Frame = this.encodeH264Frame(compositeFrame);
-                encodedH264Frame.setTimeCode((long)timeCode);
+                encodedH264Frame.setTimeCode( ((long)timeCode) * 1000);
                 encodedH264Frame.setProducerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis());
                 encodedH264Frame.setServerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getServerSideTimestampMillis());
                 log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
