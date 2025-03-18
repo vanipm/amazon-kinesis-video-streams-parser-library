@@ -82,8 +82,7 @@ public class KVSMediaSource implements MediaSource {
         log.debug("putFrameData : {} producerSideTimeStampMillis {} serverSideTimeStampMillis {} ", new Object[]{encodedFrame, encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getServerSideTimeStampMillis()});
         int flags = encodedFrame.isKeyFrame() ? 1 : 0;
         if (encodedFrame.getByteBuffer() != null) {
-            long startTime = System.currentTimeMillis() * 10000L;
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, startTime, startTime, 200000L, encodedFrame.getByteBuffer());
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() * 10000L, encodedFrame.getTimeCode() * 10000L, 200000L, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
@@ -119,4 +118,5 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
+
 
