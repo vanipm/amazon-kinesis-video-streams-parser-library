@@ -12,6 +12,7 @@ This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS O
 See the License for the specific language governing permissions and limitations under the License.
 */
 
+
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -124,7 +125,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 encodedH264Frame.setServerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getServerSideTimestampMillis());
                 log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
                 log.debug("EncodedFrame: encodedH264Frame: {}", encodedH264Frame);
-                this.putFrame(encodedH264Frame, ((BigInteger)trackMetadata.getPixelWidth().get()).intValue(), ((BigInteger)trackMetadata.getPixelHeight().get()).intValue());
+                this.putFrame(encodedH264Frame, ((BigInteger)trackMetadata.getPixelWidth().get()).intValue(), ((BigInteger)trackMetadata.getPixelHeight().get()).intValue(), timeCode);
                 ++this.frameNo;
             } else {
                 log.debug("Skipping audio frames !");
@@ -135,7 +136,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
 
     }
 
-    private void putFrame(EncodedFrame encodedH264Frame, int width, int height) {
+    private void putFrame(EncodedFrame encodedH264Frame, int width, int height, int timeCode) {
         if (!this.isKVSProducerInitialized) {
             log.info("Initializing JNI...");
             this.initializeKinesisVideoProducer(width, height, encodedH264Frame.getCpd().array());
@@ -143,7 +144,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
         }
 
         log.debug("Putting frame {} with getTimeCode {} producerSideTimeStampMillis {} serverSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
-        this.KVSMediaSource.putFrameData(encodedH264Frame);
+        this.KVSMediaSource.putFrameData(encodedH264Frame, timeCode);
         log.debug("PutFrame successful for frame no : {}", this.frameNo);
     }
 
