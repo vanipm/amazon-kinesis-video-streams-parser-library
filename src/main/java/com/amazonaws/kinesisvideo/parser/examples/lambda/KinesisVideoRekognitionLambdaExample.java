@@ -80,6 +80,10 @@ public final class KinesisVideoRekognitionLambdaExample implements RequestHandle
        log.info("KDSStreamName: " + System.getProperty("KDSStreamName"));
        final KinesisVideoRekognitionLambdaExample KinesisVideoRekognitionLambdaExample =
                 new KinesisVideoRekognitionLambdaExample();
+
+        log.debug( "System NanoTime {} ", System.nanoTime() );
+        log.debug( "System CurrentTimeMillis {} ", System.currentTimeMillis());
+       
         KinesisVideoRekognitionLambdaExample.initialize(
                 System.getProperty("KVSStreamName"), Regions.fromName(System.getenv("AWS_REGION")));
         log.debug("InvokingstartKDSWorker");
