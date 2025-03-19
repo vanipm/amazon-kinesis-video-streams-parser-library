@@ -12,7 +12,6 @@ This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS O
 See the License for the specific language governing permissions and limitations under the License.
 */
 
-
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.kinesisvideo.client.mediasource.CameraMediaSourceConfiguration;
@@ -98,7 +97,7 @@ public class KVSMediaSource implements MediaSource {
                 this.prevTimeCode = encodedFrame.getTimeCode();
             }
 
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, (encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis()) * 10000L, (encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis()) * 10000L, this.duration * 10000L, encodedFrame.getByteBuffer());
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), this.duration, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
@@ -134,5 +133,4 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
-
 
