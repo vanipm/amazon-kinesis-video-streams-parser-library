@@ -12,6 +12,7 @@ This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS O
 See the License for the specific language governing permissions and limitations under the License.
 */
 
+
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.kinesisvideo.client.mediasource.CameraMediaSourceConfiguration;
@@ -38,6 +39,9 @@ public class KVSMediaSource implements MediaSource {
     private MediaSourceSink mediaSourceSink;
     private int frameIndex;
     private final StreamInfo streamInfo;
+    private long prevTimeCode = 0L;
+    private long duration = 0L;
+    private long totalDuration = 0L;
 
     private void putFrame(KinesisVideoFrame kinesisVideoFrame) {
         try {
@@ -81,7 +85,20 @@ public class KVSMediaSource implements MediaSource {
         log.debug("putFrameData : {} producerSideTimeStampMillis {} serverSideTimeStampMillis {} ", new Object[]{encodedFrame, encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getServerSideTimeStampMillis()});
         int flags = encodedFrame.isKeyFrame() ? 1 : 0;
         if (encodedFrame.getByteBuffer() != null) {
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() * 10000L, encodedFrame.getTimeCode() * 10000L, 200000L, encodedFrame.getByteBuffer());
+            if (encodedFrame.isKeyFrame()) {
+                this.duration = 5L;
+                this.totalDuration = 0L;
+            } else {
+                this.duration = encodedFrame.getTimeCode() - this.prevTimeCode;
+                this.totalDuration += this.duration;
+                if (this.totalDuration > 1998L) {
+                    this.duration = 1L;
+                }
+
+                this.prevTimeCode = encodedFrame.getTimeCode();
+            }
+
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, (encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis()) * 10000L, (encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis()) * 10000L, this.duration * 10000L, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
