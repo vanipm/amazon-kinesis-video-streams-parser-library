@@ -97,6 +97,12 @@ public class KVSMediaSource implements MediaSource {
                 this.prevTimeCode = encodedFrame.getTimeCode();
             }
 
+            if (encodedFrame.getTimeCode() == 0L) {
+                this.duration = 10L;
+            } else {
+                this.duration = encodedFrame.getTimeCode();
+            }
+
             KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), this.duration, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
@@ -108,6 +114,7 @@ public class KVSMediaSource implements MediaSource {
         }
 
     }
+
 
     public void stop() {
         this.mediaSourceState = MediaSourceState.STOPPED;
