@@ -80,7 +80,7 @@ public class KVSMediaSource implements MediaSource {
         this.mediaSourceState = MediaSourceState.RUNNING;
     }
 
-     public void putFrameData(EncodedFrame encodedFrame, int timeCode) {
+    public void putFrameData(EncodedFrame encodedFrame, int timeCode) {
         log.debug("putFrameData : {} producerSideTimeStampMillis {} serverSideTimeStampMillis {} ", new Object[]{encodedFrame, encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getServerSideTimeStampMillis()});
         int flags = encodedFrame.isKeyFrame() ? 1 : 0;
         if (encodedFrame.getByteBuffer() != null) {
@@ -105,7 +105,7 @@ public class KVSMediaSource implements MediaSource {
                 this.duration = encodedFrame.getTimeCode();
             }
 
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), this.duration, encodedFrame.getByteBuffer());
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), this.duration * 10000L, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
