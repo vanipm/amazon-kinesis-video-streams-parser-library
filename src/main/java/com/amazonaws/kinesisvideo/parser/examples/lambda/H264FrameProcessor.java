@@ -61,12 +61,14 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
     private int currentWidth = 0;
     private int currentHeight = 0;
     private long keyFrameTimecode;
+    private long fragmentStartTime;
 
     private H264FrameProcessor(AWSCredentialsProvider credentialsProvider, String outputKvsStreamName, Regions regionName) {
         this.credentialsProvider = credentialsProvider;
         this.outputKvsStreamName = outputKvsStreamName;
         this.regionName = regionName;
         this.h264Decoder = new H264FrameDecoder();
+        this.fragmentStartTime = System.currentTimeMillis();
     }
 
     private void initializeKinesisVideoProducer(int width, int height, byte[] cpd) {
@@ -120,7 +122,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 Optional<RekognizedOutput> rekognizedOutput = this.findRekognizedOutputForFrame(frame, fragmentMetadata);
                 BufferedImage compositeFrame = this.renderFrame(decodedFrame, rekognizedOutput);
                 EncodedFrame encodedH264Frame = this.encodeH264Frame(compositeFrame);
-                encodedH264Frame.setTimeCode( ((long)timeCode) * 1000);
+                encodedH264Frame.setTimeCode(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis() + (long)frame.getTimeCode());
                 encodedH264Frame.setProducerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis());
                 encodedH264Frame.setServerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getServerSideTimestampMillis());
                 log.debug("Encoded frame : {} with timecode : {} ProducerSideTimeStampMillis {} ServerSideTimeStampMillis {}", new Object[]{this.frameNo, encodedH264Frame.getTimeCode(), encodedH264Frame.getProducerSideTimeStampMillis(), encodedH264Frame.getServerSideTimeStampMillis()});
@@ -174,6 +176,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
             if (frame.isKeyFrame()) {
                 this.keyFrameTimecode = (long)frame.getTimeCode();
                 log.debug("Key frame timecode : {}", this.keyFrameTimecode);
+                this.fragmentStartTime = System.currentTimeMillis();
             }
 
             long frameOffset = (long)frame.getTimeCode() > this.keyFrameTimecode ? (long)frame.getTimeCode() - this.keyFrameTimecode : 0L;
@@ -221,4 +224,3 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
         this.frameBitRate = frameBitRate;
     }
 }
-
