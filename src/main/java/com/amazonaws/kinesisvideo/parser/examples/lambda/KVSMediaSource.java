@@ -90,7 +90,7 @@ public class KVSMediaSource implements MediaSource {
                 this.duration = 5L;
                 this.totalDuration = 0L;
                 this.prevTimeCode = 0L;
-                this.putFrameTimeCode = encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis();
+                this.putFrameTimeCode = System.currentTimeMillis();
             } else {
                 this.duration = encodedFrame.getTimeCode() - this.prevTimeCode;
                 this.totalDuration += this.duration;
@@ -101,8 +101,8 @@ public class KVSMediaSource implements MediaSource {
                 this.prevTimeCode = encodedFrame.getTimeCode();
             }
 
-            if (this.prevTimeCode == 0L) {
-                this.putFrameTimeCode = encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis();
+            if (this.putFrameTimeCode == 0L) {
+                this.putFrameTimeCode = System.currentTimeMillis();
             }
 
             log.debug(" frameTimeCode {} duration {} totalDurationMillis {} prevTimeCode {} currentTimeCode {}", new Object[]{encodedFrame.getTimeCode(), this.duration, this.totalDuration, this.prevTimeCode, encodedFrame.getTimeCode()});
