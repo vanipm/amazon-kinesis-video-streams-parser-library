@@ -33,9 +33,13 @@ import com.amazonaws.kinesisvideo.producer.StreamInfo.NalAdaptationFlags;
 import com.amazonaws.regions.Regions;
 import com.google.common.base.Preconditions;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +124,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
                 log.debug("Decoded frame : {} with timecode : {} CachedTimeCode {} and fragment metadata : {}", new Object[]{this.frameNo, frame.getTimeCode(), timeCode, fragmentMetadata.get()});
                 Optional<RekognizedOutput> rekognizedOutput = this.findRekognizedOutputForFrame(frame, fragmentMetadata);
                 BufferedImage compositeFrame = this.renderFrame(decodedFrame, rekognizedOutput);
+                this.saveBufferedImage(compositeFrame, ((FragmentMetadata)fragmentMetadata.get()).getFragmentNumberString(), frame.getTimeCode());
                 EncodedFrame encodedH264Frame = this.encodeH264Frame(compositeFrame);
                 encodedH264Frame.setTimeCode((long)frame.getTimeCode());
                 encodedH264Frame.setProducerSideTimeStampMillis(((FragmentMetadata)fragmentMetadata.get()).getProducerSideTimestampMillis());
@@ -133,6 +138,30 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
             }
         } else {
             log.warn("Rekognition output is empty");
+        }
+
+    }
+
+    private void saveBufferedImage(BufferedImage compositeFrame, String fragmentNumberString, int frameIndex) {
+        try {
+            String timeStamp = (new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date());
+            String outputFolderName = String.format("./imglogs/frames_%s", timeStamp);
+            File outputFolder = new File(outputFolderName);
+            if (!outputFolder.exists()) {
+                outputFolder.mkdirs();
+                log.debug("Created output folder at: {}", outputFolder.getAbsolutePath());
+            }
+
+            String fileName = String.format("fragment_%s_frame_%04d.png", fragmentNumberString, frameIndex);
+            File outputFile = new File(outputFolder, fileName);
+            boolean success = ImageIO.write(compositeFrame, "png", outputFile);
+            if (success) {
+                log.debug("Saved frame to: {}", outputFile.getAbsolutePath());
+            } else {
+                log.debug("Failed to save frame to: {}", outputFile.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            log.debug("Exception while saving frame: {}", e.getMessage(), e);
         }
 
     }
