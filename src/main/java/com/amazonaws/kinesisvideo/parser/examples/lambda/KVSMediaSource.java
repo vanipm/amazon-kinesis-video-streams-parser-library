@@ -12,6 +12,7 @@ This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS O
 See the License for the specific language governing permissions and limitations under the License.
 */
 
+
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.kinesisvideo.client.mediasource.CameraMediaSourceConfiguration;
@@ -41,10 +42,11 @@ public class KVSMediaSource implements MediaSource {
     private long prevTimeCode = 0L;
     private long duration = 0L;
     private long totalDuration = 0L;
+    private long putFrameTimeCode = 0L;
 
     private void putFrame(KinesisVideoFrame kinesisVideoFrame) {
         try {
-            log.debug("PutFrame for frame no : {}", this.frameIndex);
+            log.debug("PutFrame for frame no : {} ; kinesisVideoFrame {}", this.frameIndex, kinesisVideoFrame);
             this.mediaSourceSink.onFrame(kinesisVideoFrame);
         } catch (KinesisVideoException ex) {
             throw new RuntimeException(ex);
@@ -88,6 +90,7 @@ public class KVSMediaSource implements MediaSource {
                 this.duration = 5L;
                 this.totalDuration = 0L;
                 this.prevTimeCode = 0L;
+                this.putFrameTimeCode = encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis();
             } else {
                 this.duration = encodedFrame.getTimeCode() - this.prevTimeCode;
                 this.totalDuration += this.duration;
@@ -98,14 +101,13 @@ public class KVSMediaSource implements MediaSource {
                 this.prevTimeCode = encodedFrame.getTimeCode();
             }
 
-            log.debug(" duration {} totalDurationMillis {} prevTimeCode {} currentTimeCode {}", new Object[]{this.duration, this.totalDuration, this.prevTimeCode, encodedFrame.getTimeCode()});
-            if (encodedFrame.getTimeCode() == 0L) {
-                this.duration = 10L;
-            } else {
-                this.duration = encodedFrame.getTimeCode();
+            if (this.prevTimeCode == 0L) {
+                this.putFrameTimeCode = encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis();
             }
 
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), encodedFrame.getTimeCode() + encodedFrame.getProducerSideTimeStampMillis(), this.duration * 10000L, encodedFrame.getByteBuffer());
+            log.debug(" frameTimeCode {} duration {} totalDurationMillis {} prevTimeCode {} currentTimeCode {}", new Object[]{encodedFrame.getTimeCode(), this.duration, this.totalDuration, this.prevTimeCode, encodedFrame.getTimeCode()});
+            log.debug(" putFrameTime code {} ", this.putFrameTimeCode);
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, encodedFrame.getTimeCode() * 10000L, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
@@ -116,7 +118,6 @@ public class KVSMediaSource implements MediaSource {
         }
 
     }
-
 
     public void stop() {
         this.mediaSourceState = MediaSourceState.STOPPED;
@@ -142,4 +143,3 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
-
