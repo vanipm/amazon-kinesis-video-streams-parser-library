@@ -144,7 +144,7 @@ public class H264FrameProcessor implements FrameVisitor.FrameProcessor {
 
     private void saveBufferedImage(BufferedImage compositeFrame, String fragmentNumberString, int frameIndex) {
         try {
-            String timeStamp = (new SimpleDateFormat("yyyyMMdd_HHmmss")).format(new Date());
+            String timeStamp = (new SimpleDateFormat("yyyyMMdd_HHmm")).format(new Date());
             String outputFolderName = String.format("./imglogs/frames_%s", timeStamp);
             File outputFolder = new File(outputFolderName);
             if (!outputFolder.exists()) {
