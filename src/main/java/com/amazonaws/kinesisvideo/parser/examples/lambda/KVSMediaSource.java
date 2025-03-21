@@ -116,9 +116,9 @@ public class KVSMediaSource implements MediaSource {
             log.debug(" putFrameTime code {} ", this.putFrameTimeCode);
             KinesisVideoFrame frame;
             if (encodedFrame.isKeyFrame()) {
-                frame = new KinesisVideoFrame(this.frameIndex++, flags, System.currentTimeMillis(), System.currentTimeMillis(), 20L, encodedFrame.getByteBuffer());
+                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, 20L, encodedFrame.getByteBuffer());
             } else {
-                frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode(), encodedFrame.getTimeCode(), encodedFrame.getTimeCode(), encodedFrame.getByteBuffer());
+                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, encodedFrame.getTimeCode(), encodedFrame.getByteBuffer());
             }
 
             if (frame.getSize() == 0) {
