@@ -42,6 +42,7 @@ public class KVSMediaSource implements MediaSource {
     private long duration = 0L;
     private long totalDuration = 0L;
     private long putFrameTimeCode = 0L;
+    private boolean firstFrameReset = false;
 
     private void putFrame(KinesisVideoFrame kinesisVideoFrame) {
         try {
@@ -90,8 +91,15 @@ public class KVSMediaSource implements MediaSource {
                 this.totalDuration = 0L;
                 this.prevTimeCode = 0L;
                 this.putFrameTimeCode = System.currentTimeMillis();
+                this.firstFrameReset = true;
             } else {
-                this.duration = encodedFrame.getTimeCode() - this.prevTimeCode;
+                if (this.firstFrameReset) {
+                    this.duration = encodedFrame.getTimeCode() - 5L;
+                    this.firstFrameReset = false;
+                } else {
+                    this.duration = encodedFrame.getTimeCode() - this.prevTimeCode;
+                }
+
                 this.totalDuration += this.duration;
                 if (this.totalDuration > 1998L) {
                     this.duration = 1L;
@@ -106,7 +114,7 @@ public class KVSMediaSource implements MediaSource {
 
             log.debug(" frameTimeCode {} duration {} totalDurationMillis {} prevTimeCode {} currentTimeCode {}", new Object[]{encodedFrame.getTimeCode(), this.duration, this.totalDuration, this.prevTimeCode, encodedFrame.getTimeCode()});
             log.debug(" putFrameTime code {} ", this.putFrameTimeCode);
-            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode * 10000L, this.putFrameTimeCode * 10000L, 200000L, encodedFrame.getByteBuffer());
+            KinesisVideoFrame frame = new KinesisVideoFrame(this.frameIndex++, flags, encodedFrame.getTimeCode(), encodedFrame.getTimeCode(), this.duration, encodedFrame.getByteBuffer());
             if (frame.getSize() == 0) {
                 return;
             }
@@ -142,4 +150,3 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
-
