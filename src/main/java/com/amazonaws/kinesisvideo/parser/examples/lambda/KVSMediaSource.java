@@ -12,6 +12,7 @@ This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS O
 See the License for the specific language governing permissions and limitations under the License.
 */
 
+
 package com.amazonaws.kinesisvideo.parser.examples.lambda;
 
 import com.amazonaws.kinesisvideo.client.mediasource.CameraMediaSourceConfiguration;
@@ -43,6 +44,7 @@ public class KVSMediaSource implements MediaSource {
     private long totalDuration = 0L;
     private long putFrameTimeCode = 0L;
     private boolean firstFrameReset = false;
+    private int frameWithinFragment = 1;
 
     private void putFrame(KinesisVideoFrame kinesisVideoFrame) {
         try {
@@ -92,6 +94,7 @@ public class KVSMediaSource implements MediaSource {
                 this.prevTimeCode = 0L;
                 this.putFrameTimeCode = System.currentTimeMillis();
                 this.firstFrameReset = true;
+                this.frameWithinFragment = 0;
             } else {
                 if (this.firstFrameReset) {
                     this.duration = encodedFrame.getTimeCode() - 5L;
@@ -106,6 +109,7 @@ public class KVSMediaSource implements MediaSource {
                 }
 
                 this.prevTimeCode = encodedFrame.getTimeCode();
+                ++this.frameWithinFragment;
             }
 
             if (this.putFrameTimeCode == 0L) {
@@ -113,12 +117,12 @@ public class KVSMediaSource implements MediaSource {
             }
 
             log.debug(" frameTimeCode {} duration {} totalDurationMillis {} prevTimeCode {} currentTimeCode {}", new Object[]{encodedFrame.getTimeCode(), this.duration, this.totalDuration, this.prevTimeCode, encodedFrame.getTimeCode()});
-            log.debug(" putFrameTime code {} ", this.putFrameTimeCode);
+            log.debug(" putFrameTime code {} frameWithinFragment {} ", this.putFrameTimeCode, this.frameWithinFragment);
             KinesisVideoFrame frame;
             if (encodedFrame.isKeyFrame()) {
                 frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, 20L, encodedFrame.getByteBuffer());
             } else {
-                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, encodedFrame.getTimeCode(), encodedFrame.getByteBuffer());
+                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, (long)(this.frameWithinFragment * 20), encodedFrame.getByteBuffer());
             }
 
             if (frame.getSize() == 0) {
@@ -156,3 +160,4 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
+
