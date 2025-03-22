@@ -120,9 +120,9 @@ public class KVSMediaSource implements MediaSource {
             log.debug(" putFrameTime code {} frameWithinFragment {} ", this.putFrameTimeCode, this.frameWithinFragment);
             KinesisVideoFrame frame;
             if (encodedFrame.isKeyFrame()) {
-                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode, this.putFrameTimeCode, 200000L, encodedFrame.getByteBuffer());
+                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode * 10000L, this.putFrameTimeCode * 10000L, 200000L, encodedFrame.getByteBuffer());
             } else {
-                frame = new KinesisVideoFrame(this.frameIndex++, flags, this.putFrameTimeCode + (long)(this.frameWithinFragment * 20), this.putFrameTimeCode + (long)(this.frameWithinFragment * 20), 200000L, encodedFrame.getByteBuffer());
+                frame = new KinesisVideoFrame(this.frameIndex++, flags, (this.putFrameTimeCode + (long)(this.frameWithinFragment * 20)) * 10000L, (this.putFrameTimeCode + (long)(this.frameWithinFragment * 20)) * 10000L, 200000L, encodedFrame.getByteBuffer());
             }
 
             if (frame.getSize() == 0) {
@@ -160,4 +160,5 @@ public class KVSMediaSource implements MediaSource {
         this.streamInfo = streamInfo;
     }
 }
+
 
